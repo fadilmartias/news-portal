@@ -1,6 +1,6 @@
 const isNews = (news) => {
     return news.map((data, i) => {
-        return <div key={i} className="card w-96 bg-base-100 shadow-xl">
+        return <div key={i} className="card w-full lg:w-96 bg-base-100 shadow-xl">
         <figure>
             <img src="https://placeimg.com/400/225/arch" alt="Shoes" />
         </figure>
@@ -26,8 +26,7 @@ const noNews = () => {
 }
 
 const NewsLists = ({news}) => {
-    if(!news && !news.length) return noNews()
-    return isNews(news)
+    return !news ? noNews() : isNews(news)
 };
 
 export default NewsLists;

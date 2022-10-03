@@ -17,6 +17,7 @@ use App\Http\Controllers\NewsController;
 */
 
 Route::get('/', [NewsController::class, 'index'])->name('homepage');
+Route::get('/news', 'NewsController@store');W
 
 Route::get('/welcome', function () {
     return Inertia::render('Welcome', [
