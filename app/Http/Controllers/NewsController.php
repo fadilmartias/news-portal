@@ -16,7 +16,7 @@ class NewsController extends Controller
      */
     public function index()
     {
-        $news = new NewsCollection(News::paginate(8));
+        $news = new NewsCollection(News::OrderByDesc('id')->paginate(8));
         return Inertia::render('Homepage', [
             'title' => 'DelNews Homepage',
             'description' => 'Halo guysssssssssss',
@@ -46,7 +46,9 @@ class NewsController extends Controller
         $news->title = $request->title;
         $news->description = $request->description;
         $news->category = $request->category;
-        $news->author = Auth::user()->email;
+        $news->author = auth()->user()->email;
+        $news->save();
+        return redirect()->back()->with('message', 'Berita Berhasil Dibuat');
     }
 
     /**
@@ -57,7 +59,10 @@ class NewsController extends Controller
      */
     public function show(News $news)
     {
-        //
+        $myNews = $news::where('author', auth()->user()->email)->get();
+        return Inertia::render('Dashboard', [
+            'myNews' => $myNews,
+        ]);
     }
 
     /**
@@ -66,9 +71,11 @@ class NewsController extends Controller
      * @param  \App\Models\News  $news
      * @return \Illuminate\Http\Response
      */
-    public function edit(News $news)
+    public function edit(News $news, Request $request)
     {
-        //
+        return Inertia::render('EditNews', [
+            'myNews' => $news->find($request->id)
+        ]);
     }
 
     /**
@@ -80,7 +87,12 @@ class NewsController extends Controller
      */
     public function update(Request $request, News $news)
     {
-        //
+        $editNews = News::where('id', $request->id)->update([
+            'title' => $request->title,
+            'description' => $request->description,
+            'category' => $request->category,
+        ]);
+        return to_route('dashboard')->with('message', 'Update Berita Berhasil');
     }
 
     /**
@@ -89,8 +101,11 @@ class NewsController extends Controller
      * @param  \App\Models\News  $news
      * @return \Illuminate\Http\Response
      */
-    public function destroy(News $news)
+    public function destroy(News $news, Request $request)
     {
-        //
+        News::where('id', $request->id)->delete();
+
+        return redirect()->back()->with('message', 'Berita Berhasil Dihapus');
+        
     }
 }

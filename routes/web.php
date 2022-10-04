@@ -17,19 +17,19 @@ use App\Http\Controllers\NewsController;
 */
 
 Route::get('/', [NewsController::class, 'index'])->name('homepage');
-Route::get('/news', 'NewsController@store');W
 
-Route::get('/welcome', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
+Route::middleware(['auth', 'verified'])->group(function() {
+    Route::get('/dashboard', function () {
+        return Inertia::render('Dashboard');
+    })->name('dashboard');
+    Route::post('/news', [NewsController::class, 'store'])->name('create.news');
+    Route::get('/news', [NewsController::class, 'show'])->name('my.news');
+    Route::get('/news/edit/', [NewsController::class, 'edit'])->name('edit.news');
+    Route::post('/news/update/', [NewsController::class, 'update'])->name('update.news');
+    Route::post('/news/delete/', [NewsController::class, 'destroy'])->name('delete.news');
+
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+
 
 require __DIR__.'/auth.php';
